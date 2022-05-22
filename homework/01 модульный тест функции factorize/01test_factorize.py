@@ -1,9 +1,13 @@
-#
-#
-# class TestFactorize(unittest.TestCase):
-#     def test_wrong_types_raise_exception(self):
-#         self.assertRaises(ValueError, factorize, 1.5)
-#         self.assertRaises(ValueError, factorize, "string")
+import unittest
+
+class TestFactorize(unittest.TestCase):
+    def test_wrong_types_raise_exception(self):
+        self.cases = [1.5, "string"]
+        for b in self.cases:
+            with self.subTest(case=b):
+                self.assertRaises(TypeError, factorize, b)
+
+
 
 
 
@@ -21,9 +25,9 @@ def factorize(x):
 
 
 if __name__=='__main__':
-    import unittest
-    import pandas
+    # import unittest
+
 
     print(factorize(10))
 
-    # unittest.main()
+    unittest.main()
