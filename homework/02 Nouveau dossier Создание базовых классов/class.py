@@ -1,9 +1,29 @@
 import math
+from abc import ABC, abstractmethod
 
 
-class Base:
 
-    pass
+
+class Base(ABC):
+    def __init__(self, data, result):
+        self.data = data
+        self.result = result
+
+
+    @abstractmethod
+    def get_answer(self):
+        return [int(x >= 0.5) for x in self.data]
+
+    @abstractmethod
+    def get_score(self):
+        ans = self.get_answer()
+        return sum([int(x == y) for (x, y) in zip(ans, self.result)]) \
+            / len(ans)
+
+    @abstractmethod
+    def get_loss(self):
+        return sum(
+            [(x - y) * (x - y) for (x, y) in zip(self.data, self.result)])
 
 
 class A:
