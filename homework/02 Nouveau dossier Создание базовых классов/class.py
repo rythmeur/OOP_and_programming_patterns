@@ -26,7 +26,7 @@ class Base(ABC):
             [(x - y) * (x - y) for (x, y) in zip(self.data, self.result)])
 
 
-class A:
+class A(Base):
     def __init__(self, data, result):
         self.data = data
         self.result = result
@@ -44,7 +44,7 @@ class A:
             [(x - y) * (x - y) for (x, y) in zip(self.data, self.result)])
 
 
-class B:
+class B(Base):
     def __init__(self, data, result):
         self.data = data
         self.result = result
@@ -74,7 +74,7 @@ class B:
         return 2 * pre * rec / (pre + rec)
 
 
-class C:
+class C(Base):
     def __init__(self, data, result):
         self.data = data
         self.result = result
