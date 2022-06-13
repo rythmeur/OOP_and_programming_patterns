@@ -10,7 +10,7 @@ class Base(ABC):
         self.result = result
 
 
-    @abstractmethod
+    # @abstractmethod
     def get_answer(self):
         return [int(x >= 0.5) for x in self.data]
 
@@ -27,12 +27,12 @@ class Base(ABC):
 
 
 class A(Base):
-    def __init__(self, data, result):
-        self.data = data
-        self.result = result
+    # def __init__(self, data, result):
+    #     self.data = data
+    #     self.result = result
 
-    def get_answer(self):
-        return [int(x >= 0.5) for x in self.data]
+    # def get_answer(self):
+    #     return [int(x >= 0.5) for x in self.data]
 
     def get_score(self):
         ans = self.get_answer()
@@ -45,12 +45,12 @@ class A(Base):
 
 
 class B(Base):
-    def __init__(self, data, result):
-        self.data = data
-        self.result = result
+    # def __init__(self, data, result):
+    #     self.data = data
+    #     self.result = result
 
-    def get_answer(self):
-        return [int(x >= 0.5) for x in self.data]
+    # def get_answer(self):
+    #     return [int(x >= 0.5) for x in self.data]
 
     def get_loss(self):
         return -sum([
@@ -75,12 +75,12 @@ class B(Base):
 
 
 class C(Base):
-    def __init__(self, data, result):
-        self.data = data
-        self.result = result
+    # def __init__(self, data, result):
+    #     self.data = data
+    #     self.result = result
 
-    def get_answer(self):
-        return [int(x >= 0.5) for x in self.data]
+    # def get_answer(self):
+    #     return [int(x >= 0.5) for x in self.data]
 
     def get_score(self):
         ans = self.get_answer()
