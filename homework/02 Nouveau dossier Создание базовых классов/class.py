@@ -58,20 +58,20 @@ class B(Base):
             for (x, y) in zip(self.data, self.result)
         ])
 
-    # def get_pre(self):
-    #     ans = self.get_answer()
-    #     res = [int(x == 1 and y == 1) for (x, y) in zip(ans, self.result)]
-    #     return sum(res) / sum(ans)
-    #
-    # def get_rec(self):
-    #     ans = self.get_answer()
-    #     res = [int(x == 1 and y == 1) for (x, y) in zip(ans, self.result)]
-    #     return sum(res) / sum(self.result)
-    #
-    # def get_score(self):
-    #     pre = self.get_pre()
-    #     rec = self.get_rec()
-    #     return 2 * pre * rec / (pre + rec)
+    def get_pre(self):
+        ans = self.get_answer()
+        res = [int(x == 1 and y == 1) for (x, y) in zip(ans, self.result)]
+        return sum(res) / sum(ans)
+
+    def get_rec(self):
+        ans = self.get_answer()
+        res = [int(x == 1 and y == 1) for (x, y) in zip(ans, self.result)]
+        return sum(res) / sum(self.result)
+
+    def get_score(self):
+        pre = self.get_pre()
+        rec = self.get_rec()
+        return 2 * pre * rec / (pre + rec)
 
 
 class C(Base):
