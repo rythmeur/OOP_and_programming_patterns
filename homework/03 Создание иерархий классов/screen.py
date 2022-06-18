@@ -5,7 +5,7 @@ import pygame
 import random
 import math
 
-SCREEN_DIM = (800, 600)
+SCREEN_DIM = (800, 600) # something
 
 
 # =======================================================================================
