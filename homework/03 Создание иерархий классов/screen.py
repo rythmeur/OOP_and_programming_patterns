@@ -5,8 +5,8 @@ import pygame
 import random
 import math
 
-SCREEN_DIM = (800, 600) # something
-
+SCREEN_DIM = (800, 600)
+# fdfsdfsd
 
 # =======================================================================================
 # Функции для работы с векторами
