@@ -6,7 +6,32 @@ import random
 import math
 
 SCREEN_DIM = (800, 600)
-# fdfsdfsd
+
+class Vec2d():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __sub__(self, other_vector):
+        """"возвращает разность двух векторов"""
+        return self.x - other_vector.x, self.y - other_vector.y
+
+    def __add__(self, other_vector):
+        """возвращает сумму двух векторов"""
+        return self.x + other_vector.x, self.y + other_vector.y
+
+    def __mul__(self, k):
+        """возвращает произведение вектора на число"""
+        return self.x * k, self.y * k
+
+    def len (self):
+        """возвращает длину вектора"""
+        return math.sqrt(self.x * self.x + self.y * self.y)
+
+    def int_pair(self):
+        """возвращает пару координат, определяющих вектор (координаты точки конца вектора),
+        координаты начальной точки вектора совпадают с началом системы координат (0, 0)"""
+        return (self.x,self.y)
 
 # =======================================================================================
 # Функции для работы с векторами
@@ -125,6 +150,20 @@ def set_points(points, speeds):
 # Основная программа
 # =======================================================================================
 if __name__ == "__main__":
+    a = Vec2d(1,2)
+    b = Vec2d(3, 4)
+    print (a-b)
+    print (a*55)
+    print (a.y, a.x, a.len())
+
+
+
+
+
+
+
+
+
     pygame.init()
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption("MyScreenSaver")
