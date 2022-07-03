@@ -114,16 +114,16 @@ def get_point(points, alpha, deg=None): # возвращаем одну точк
     return add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha))
 
 
-def get_points(base_points, count): # возвращает список точек, кол-во = steps - это точки сглаживания
+def get_points(base_points, count): # возвращает список точек сглаживания, кол-во = steps - это точки сглаживания
     alpha = 1 / count
     res = []
     for i in range(count):
         res.append(get_point(base_points, i * alpha))
-    print ("res", res)
+    print ("res get_points", res)
     return res
 
 
-def get_knot(points, count):
+def get_knot(points, count): # возвращает набор всех точек которые надо нарисовать, состоящий только из точек сглаживания
     if len(points) < 3:
         return []
     res = []
@@ -134,6 +134,7 @@ def get_knot(points, count):
         ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
 
         res.extend(get_points(ptn, count))
+    print ("res get_knot", res)
     return res
 
 
