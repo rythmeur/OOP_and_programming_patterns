@@ -41,33 +41,30 @@ def sub(x, y):
     """"возвращает разность двух векторов"""
     return x[0] - y[0], x[1] - y[1]
 
-
 def add(x, y):
     """возвращает сумму двух векторов"""
     return x[0] + y[0], x[1] + y[1]
-
 
 def length(x):
     """возвращает длину вектора"""
     return math.sqrt(x[0] * x[0] + x[1] * x[1])
 
-
 def mul(v, k):
     """возвращает произведение вектора на число"""
     return v[0] * k, v[1] * k
-
 
 def vec(x, y):
     """возвращает пару координат, определяющих вектор (координаты точки конца вектора),
     координаты начальной точки вектора совпадают с началом системы координат (0, 0)"""
     return sub(y, x)
 
-
 # =======================================================================================
 # Функции отрисовки
 # =======================================================================================
 def draw_points(points, style="points", width=3, color=(255, 255, 255)):
-    """функция отрисовки точек на экране"""
+    """функция отрисовки точек на экране
+    передаете список пар координат точек, функция проходит по этому списку
+    и "наносит" на дисплей линии соединяющие каждую пару точек с помощью pygame.draw.line"""
     if style == "line":
         for p_n in range(-1, len(points) - 1):
             pygame.draw.line(gameDisplay, color,
@@ -106,19 +103,23 @@ def draw_help():
 # =======================================================================================
 # Функции, отвечающие за расчет сглаживания ломаной
 # =======================================================================================
-def get_point(points, alpha, deg=None):
+def get_point(points, alpha, deg=None): # возвращаем одну точку
     if deg is None:
         deg = len(points) - 1
     if deg == 0:
-        return points[0]
+        return points[0] # возврат координат первой точки из трех
+    #print ("points", points, "len(points)", len(points), "deg", deg)
+    #print ("deg",deg,  "points[deg]", points[deg], "alpha", alpha )
+    #print ("add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha))", add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha)))
     return add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha))
 
 
-def get_points(base_points, count):
+def get_points(base_points, count): # возвращает список точек, кол-во = steps - это точки сглаживания
     alpha = 1 / count
     res = []
     for i in range(count):
         res.append(get_point(base_points, i * alpha))
+    print ("res", res)
     return res
 
 
@@ -152,9 +153,7 @@ def set_points(points, speeds):
 if __name__ == "__main__":
     a = Vec2d(1,2)
     b = Vec2d(3, 4)
-    print (a-b)
-    print (a*55)
-    print (a.y, a.x, a.len())
+
 
 
 
@@ -168,7 +167,7 @@ if __name__ == "__main__":
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption("MyScreenSaver")
 
-    steps = 35
+    steps = 2
     working = True
     points = []
     speeds = []
