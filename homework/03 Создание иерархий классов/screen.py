@@ -24,14 +24,22 @@ class Vec2d():
         """возвращает произведение вектора на число"""
         return self.x * k, self.y * k
 
-    def len (self):
+    def __len__(self):
         """возвращает длину вектора"""
-        return math.sqrt(self.x * self.x + self.y * self.y)
+        return int(math.sqrt(self.x * self.x + self.y * self.y))
 
     def int_pair(self):
         """возвращает пару координат, определяющих вектор (координаты точки конца вектора),
         координаты начальной точки вектора совпадают с началом системы координат (0, 0)"""
         return (self.x,self.y)
+
+
+class Polyline():
+    pass
+
+class Knot(Polyline):
+    pass
+
 
 # =======================================================================================
 # Функции для работы с векторами
@@ -103,7 +111,7 @@ def draw_help():
 # =======================================================================================
 # Функции, отвечающие за расчет сглаживания ломаной
 # =======================================================================================
-def get_point(points, alpha, deg=None): # возвращаем одну точку
+def get_point(points, alpha, deg=None): # возвращаем одну точку сглаживания
     if deg is None:
         deg = len(points) - 1
     if deg == 0:
@@ -119,7 +127,7 @@ def get_points(base_points, count): # возвращает список точе
     res = []
     for i in range(count):
         res.append(get_point(base_points, i * alpha))
-    print ("res get_points", res)
+    #print ("res get_points", res)
     return res
 
 
@@ -134,7 +142,7 @@ def get_knot(points, count): # возвращает набор всех точе
         ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
 
         res.extend(get_points(ptn, count))
-    print ("res get_knot", res)
+    #print ("res get_knot", res)
     return res
 
 
@@ -152,8 +160,10 @@ def set_points(points, speeds):
 # Основная программа
 # =======================================================================================
 if __name__ == "__main__":
-    a = Vec2d(1,2)
+    a = Vec2d(1.0,2.0)
     b = Vec2d(3, 4)
+    print (len(a))
+    knot = Knot()
 
 
 
