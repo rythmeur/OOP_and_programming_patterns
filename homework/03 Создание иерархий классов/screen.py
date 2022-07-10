@@ -8,9 +8,9 @@ import math
 SCREEN_DIM = (800, 600)
 
 class Vec2d():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, coord_tochki):
+        self.x = coord_tochki[0]
+        self.y = coord_tochki[1]
 
     def __sub__(self, other_vector):
         """"возвращает разность двух векторов"""
@@ -35,7 +35,63 @@ class Vec2d():
 
 
 class Polyline():
-    pass
+    def __init__(self, list_of_points):
+        self.list_of_points =list_of_points
+        #print (single_point.int_pair())
+
+    def add_point(self,single_point_Vec2d):
+        # print("self.list_of_points start", self.list_of_points)
+        # print ("single_point_Vec2d.int_pair()", single_point_Vec2d.int_pair())
+        self.list_of_points.append(single_point_Vec2d.int_pair())
+        # print ("self.list_of_points end", self.list_of_points)
+
+    def draw_points(self, style="points", width=3, color=(255, 255, 255)):
+        """функция отрисовки точек на экране
+        передаете список пар координат точек, функция проходит по этому списку
+        и "наносит" на дисплей линии соединяющие каждую пару точек с помощью pygame.draw.line"""
+        if style == "line":
+            for p_n in range(-1, len( self.list_of_points) - 1):
+                pygame.draw.line(gameDisplay, color,
+                                 (int( self.list_of_points[p_n][0]), int( self.list_of_points[p_n][1])),
+                                 (int( self.list_of_points[p_n + 1][0]), int( self.list_of_points[p_n + 1][1])), width)
+
+        elif style == "points":
+            for p in  self.list_of_points:
+                pygame.draw.circle(gameDisplay, color,
+                                   (int(p[0]), int(p[1])), width)
+
+    def draw_help(self):
+        """функция отрисовки экрана справки программы"""
+        gameDisplay.fill((50, 50, 50))
+        font1 = pygame.font.SysFont("courier", 24)
+        font2 = pygame.font.SysFont("serif", 24)
+        data = []
+        data.append(["F1", "Show Help"])
+        data.append(["R", "Restart"])
+        data.append(["P", "Pause/Play"])
+        data.append(["Num+", "More points"])
+        data.append(["Num-", "Less points"])
+        data.append(["", ""])
+        data.append([str(steps), "Current points"])
+
+        pygame.draw.lines(gameDisplay, (255, 50, 50, 255), True, [
+            (0, 0), (800, 0), (800, 600), (0, 600)], 5)
+        for i, text in enumerate(data):
+            gameDisplay.blit(font1.render(
+                text[0], True, (128, 128, 255)), (100, 100 + 30 * i))
+            gameDisplay.blit(font2.render(
+                text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
+
+    def set_points(self, speeds):
+        """функция перерасчета координат опорных точек"""
+        for p in range(len( self.list_of_points)):
+            self.list_of_points[p] = add( self.list_of_points[p], speeds[p])
+            if  self.list_of_points[p][0] > SCREEN_DIM[0] or  self.list_of_points[p][0] < 0:
+                speeds[p] = (- speeds[p][0], speeds[p][1])
+            if  self.list_of_points[p][1] > SCREEN_DIM[1] or  self.list_of_points[p][1] < 0:
+                speeds[p] = (speeds[p][0], -speeds[p][1])
+
+
 
 class Knot(Polyline):
     pass
@@ -160,10 +216,8 @@ def set_points(points, speeds):
 # Основная программа
 # =======================================================================================
 if __name__ == "__main__":
-    a = Vec2d(1.0,2.0)
-    b = Vec2d(3, 4)
-    print (len(a))
-    knot = Knot()
+
+
 
 
 
@@ -181,6 +235,9 @@ if __name__ == "__main__":
     steps = 2
     working = True
     points = []
+
+    polyl_class = Polyline([])
+
     speeds = []
     show_help = False
     pause = True
@@ -209,13 +266,27 @@ if __name__ == "__main__":
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 points.append(event.pos)
+                # print ("event.pos",event.pos)
+
+
+                a = Vec2d(event.pos)
+                polyl_class.add_point(a)
+
                 speeds.append((random.random() * 2, random.random() * 2))
 
         gameDisplay.fill((0, 0, 0))
         hue = (hue + 1) % 360
         color.hsla = (hue, 100, 50, 100)
-        draw_points(points)
-        draw_points(get_knot(points, steps), "line", 3, color)
+        # draw_points(points)
+        # draw_points(get_knot(points, steps), "line", 3, color)
+
+        polyl_class.draw_points()
+        polyl_class.draw_points("line", 3, color)
+
+
+
+
+
         if not pause:
             set_points(points, speeds)
         if show_help:
