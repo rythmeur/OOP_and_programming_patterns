@@ -14,15 +14,21 @@ class Vec2d():
 
     def __sub__(self, other_vector):
         """"возвращает разность двух векторов"""
-        return self.x - other_vector.x, self.y - other_vector.y
+        self.x -= other_vector.x
+        self.y -= other_vector.y
+        return Vec2d((self.x, self.y))
 
     def __add__(self, other_vector):
         """возвращает сумму двух векторов"""
-        return self.x + other_vector.x, self.y + other_vector.y
+        self.x = self.x + other_vector.x
+        self.y = self.y + other_vector.y
+        return Vec2d((self.x, self.y))
 
     def __mul__(self, k):
         """возвращает произведение вектора на число"""
-        return self.x * k, self.y * k
+        self.x *= k
+        self.y *= k
+        return Vec2d((self.x, self.y))
 
     def __len__(self):
         """возвращает длину вектора"""
@@ -37,12 +43,12 @@ class Vec2d():
 class Polyline():
     def __init__(self, list_of_points):
         self.list_of_points =list_of_points
-        #print (single_point.int_pair())
+
 
     def add_point(self,single_point_Vec2d):
         # print("self.list_of_points start", self.list_of_points)
         # print ("single_point_Vec2d.int_pair()", single_point_Vec2d.int_pair())
-        self.list_of_points.append(single_point_Vec2d.int_pair())
+        self.list_of_points.append(single_point_Vec2d)
         # print ("self.list_of_points end", self.list_of_points)
 
     def draw_points(self, style="points", width=3, color=(255, 255, 255)):
@@ -52,13 +58,13 @@ class Polyline():
         if style == "line":
             for p_n in range(-1, len( self.list_of_points) - 1):
                 pygame.draw.line(gameDisplay, color,
-                                 (int( self.list_of_points[p_n][0]), int( self.list_of_points[p_n][1])),
-                                 (int( self.list_of_points[p_n + 1][0]), int( self.list_of_points[p_n + 1][1])), width)
+                                 (int( self.list_of_points[p_n].int_pair()[0]), int( self.list_of_points[p_n].int_pair()[1])),
+                                 (int( self.list_of_points[p_n + 1].int_pair()[0]), int( self.list_of_points[p_n + 1].int_pair()[1])), width)
 
         elif style == "points":
             for p in  self.list_of_points:
                 pygame.draw.circle(gameDisplay, color,
-                                   (int(p[0]), int(p[1])), width)
+                                   (int(p.int_pair()[0]), int(p.int_pair()[1])), width)
 
     def draw_help(self):
         """функция отрисовки экрана справки программы"""
@@ -85,19 +91,54 @@ class Polyline():
     def set_points(self, speeds):
         """функция перерасчета координат опорных точек"""
         for p in range(len( self.list_of_points)):
-            self.list_of_points[p] = add( self.list_of_points[p], speeds[p])
-            if  self.list_of_points[p][0] > SCREEN_DIM[0] or  self.list_of_points[p][0] < 0:
-                speeds[p] = (- speeds[p][0], speeds[p][1])
-            if  self.list_of_points[p][1] > SCREEN_DIM[1] or  self.list_of_points[p][1] < 0:
-                speeds[p] = (speeds[p][0], -speeds[p][1])
+            self.list_of_points[p] = self.list_of_points[p] + speeds.list_of_points[p]
+            if self.list_of_points[p].int_pair()[0] > SCREEN_DIM[0] or  self.list_of_points[p].int_pair()[0] < 0:
+                speeds.list_of_points[p].x = - speeds.list_of_points[p].int_pair()[0]
+                speeds.list_of_points[p].y = speeds.list_of_points[p].int_pair()[1]
+                # speeds.list_of_points[p] = (- speeds.list_of_points[p][0], speeds.list_of_points[p][1])
+            if self.list_of_points[p].int_pair()[1] > SCREEN_DIM[1] or  self.list_of_points[p].int_pair()[1] < 0:
+                speeds.list_of_points[p].x = speeds.list_of_points[p].int_pair()[0]
+                speeds.list_of_points[p].y = -speeds.list_of_points[p].int_pair()[1]
+                # speeds.list_of_points[p] = (speeds.list_of_points[p][0], -speeds[p].list_of_points[1])
 
 
 
 class Knot(Polyline):
     def __init__(self, list_of_points):
+        super().__init__(list_of_points)
         self.list_of_points =list_of_points
 
+    def get_point(self, alpha, deg=None):  # возвращаем одну точку сглаживания
+        if deg is None:
+            deg = len(self.list_of_points) - 1
+            # print ("deg", deg)
+        if deg == 0:
+            return self.list_of_points[0]  # возврат координат первой точки из трех
 
+        return  (self.list_of_points[deg] * alpha) #+ (get_point(self, alpha, deg - 1) * (1 - alpha)))
+
+    def get_points(self, count):  # возвращает список точек сглаживания, кол-во = steps - это точки сглаживания
+        alpha = 1 / count
+        res = []
+        for i in range(count):
+            res.append(get_point(i * alpha))
+        # print ("res get_points", res)
+        return res
+
+    def get_knot(self,
+                 count):  # возвращает набор всех точек которые надо нарисовать, состоящий только из точек сглаживания
+        if len(self.list_of_points) < 3:
+            return []
+        res = []
+        for i in range(-2, len(self.list_of_points) - 2):
+            ptn = []
+            ptn.append(((self.list_of_points[i] + self.list_of_points[i + 1]) * 0.5))
+            ptn.append(self.list_of_points[i + 1])
+            ptn.append( ( (self.list_of_points[i + 1] + self.list_of_points[i + 2])* 0.5))
+
+            res.extend(get_points(count))
+        # print ("res get_knot", res)
+        return res
 
 
 
@@ -244,6 +285,8 @@ if __name__ == "__main__":
     knot_class = Knot([])
 
     speeds = []
+    knot_class_speeds = Knot([])
+
     show_help = False
     pause = True
 
@@ -277,8 +320,10 @@ if __name__ == "__main__":
                 a = Vec2d(event.pos)
                 # polyl_class.add_point(a)
                 knot_class.add_point(a)
+                b =  Vec2d((random.random() * 2, random.random() * 2))
 
                 speeds.append((random.random() * 2, random.random() * 2))
+                knot_class_speeds.add_point(b)
 
         gameDisplay.fill((0, 0, 0))
         hue = (hue + 1) % 360
@@ -291,12 +336,17 @@ if __name__ == "__main__":
         knot_class.draw_points()
         knot_class.draw_points("line", 3, color)
 
+        # if len (knot_class.list_of_points) > 3 :
+        #     print ("knot_class.get_point(1/steps)",  knot_class.get_point(1/steps))
+
+        # knot_class.draw_points( knot_class.get_knot(  steps), "line", 3, color)
+
 
 
 
         if not pause:
             # polyl_class.set_points(speeds)
-            knot_class.set_points(speeds)
+            knot_class.set_points(knot_class_speeds)
         if show_help:
             # polyl_class.draw_help()
             knot_class.draw_help()
