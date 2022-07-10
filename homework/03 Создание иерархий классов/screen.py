@@ -94,7 +94,11 @@ class Polyline():
 
 
 class Knot(Polyline):
-    pass
+    def __init__(self, list_of_points):
+        self.list_of_points =list_of_points
+
+
+
 
 
 # =======================================================================================
@@ -237,6 +241,7 @@ if __name__ == "__main__":
     points = []
 
     polyl_class = Polyline([])
+    knot_class = Knot([])
 
     speeds = []
     show_help = False
@@ -270,7 +275,8 @@ if __name__ == "__main__":
 
 
                 a = Vec2d(event.pos)
-                polyl_class.add_point(a)
+                # polyl_class.add_point(a)
+                knot_class.add_point(a)
 
                 speeds.append((random.random() * 2, random.random() * 2))
 
@@ -280,17 +286,20 @@ if __name__ == "__main__":
         # draw_points(points)
         # draw_points(get_knot(points, steps), "line", 3, color)
 
-        polyl_class.draw_points()
-        polyl_class.draw_points("line", 3, color)
-
+        # polyl_class.draw_points()
+        # polyl_class.draw_points("line", 3, color)
+        knot_class.draw_points()
+        knot_class.draw_points("line", 3, color)
 
 
 
 
         if not pause:
-            set_points(points, speeds)
+            # polyl_class.set_points(speeds)
+            knot_class.set_points(speeds)
         if show_help:
-            draw_help()
+            # polyl_class.draw_help()
+            knot_class.draw_help()
 
         pygame.display.flip()
 
