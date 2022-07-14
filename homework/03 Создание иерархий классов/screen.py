@@ -57,6 +57,7 @@ class Polyline():
         и "наносит" на дисплей линии соединяющие каждую пару точек с помощью pygame.draw.line"""
         if style == "line":
             for p_n in range(-1, len( self.list_of_points) - 1):
+                # print ("(int( self.list_of_points[p_n + 1].int_pair()[0]), int( self.list_of_points[p_n + 1].int_pair()[1]))", (int( self.list_of_points[p_n + 1].int_pair()[0]), int( self.list_of_points[p_n + 1].int_pair()[1])))
                 pygame.draw.line(gameDisplay, color,
                                  (int( self.list_of_points[p_n].int_pair()[0]), int( self.list_of_points[p_n].int_pair()[1])),
                                  (int( self.list_of_points[p_n + 1].int_pair()[0]), int( self.list_of_points[p_n + 1].int_pair()[1])), width)
@@ -108,14 +109,17 @@ class Knot(Polyline):
         super().__init__(list_of_points)
         self.list_of_points = list_of_points
 
-    def get_point(self, points, alpha, deg=None):  # возвращаем одну точку сглаживания
+    def get_point(self, alpha, deg=None):  # возвращаем одну точку сглаживания
+        print ("len(self.list_of_points)", len(self.list_of_points))
+        points = self.list_of_points
         if deg is None:
             deg = len(points) - 1
-            # print ("deg", deg)
+            print ("deg", deg)
         if deg == 0:
             return points[0] # возврат координат первой точки из трех
-        # print ("(self.list_of_points[deg] * alpha) + (self.get_point(alpha, deg - 1) * (1 - alpha))", (self.list_of_points[deg] * alpha) + (self.get_point(alpha, deg - 1) * (1 - alpha)))
-        return  (points[deg] * alpha) + (self.get_point(points, alpha, deg - 1) * (1 - alpha))
+        one_smoothing_point = (points[deg] * alpha) + (self.get_point( alpha, deg - 1) * (1 - alpha))
+        print ("odna_tochka_sglazh", one_smoothing_point, type (one_smoothing_point),one_smoothing_point.int_pair() )
+        return one_smoothing_point
 
     def get_points(self, base_points, count):  # возвращает список точек сглаживания, кол-во = steps - это точки сглаживания
         alpha = 1 / count
@@ -127,18 +131,22 @@ class Knot(Polyline):
 
     def get_knot(self, count):  # возвращает набор всех точек которые надо нарисовать, состоящий только из точек сглаживания
         if len(self.list_of_points) < 3:
-            return []
+            pass
         res = []
         for i in range(-2, len(self.list_of_points) - 2):
             ptn = []
-            ptn.append(((self.list_of_points[i] + self.list_of_points[i + 1]) * 0.5))
-            ptn.append(self.list_of_points[i + 1])
-            ptn.append( ( (self.list_of_points[i + 1] + self.list_of_points[i + 2]) * 0.5))
+            ptn.append ((self.list_of_points[i]+ self.list_of_points[i + 1]) * 0.5)
+            ptn.append (self.list_of_points[i + 1])
+            ptn.append ((points[i + 1] + points[i + 2])* 0.5)
 
-            res.extend(self.get_points(ptn,count))
-        print ("len(res), len(self.list_of_points)",len(res), len(self.list_of_points) )
-        new_knot=Knot (res)
-        return new_knot
+            res.extend(self.get_points(ptn, count))
+
+        # print ("res", res[0], type(res[0]))
+        new_class_knote = Knot(res)
+        return new_class_knote
+
+
+
 
 
 
@@ -154,7 +162,8 @@ if __name__ == "__main__":
     gameDisplay = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption("MyScreenSaver")
 
-    steps = 1
+    steps = 2
+
     working = True
     points = []
 
@@ -204,16 +213,11 @@ if __name__ == "__main__":
         # polyl_class.draw_points()
         # polyl_class.draw_points("line", 3, color)
         knot_class.draw_points()
-        # knot_class.draw_points("line", 3, color)
+        knot_class.draw_points("line", 3, color)
 
-        # print ("knot_class.get_knot(  steps)", knot_class.get_knot(  steps))
-        c = knot_class.get_knot(steps)
-        print (c, type(c))
-        if isinstance(c, Knot):
-            c.draw_points("line", 3, color )
 
-        # knot_class.get_knot(steps)
-        # knot_class.get_knot(  steps).draw_points( "line", 3, color)
+        if len(knot_class.list_of_points)>=3:
+            knot_class.get_point(1)
 
 
 
